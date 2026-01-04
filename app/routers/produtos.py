@@ -13,6 +13,14 @@ router = APIRouter(
     tags=["Produtos"]
 )
 
+@router.get("/{produto_id}", response_model=List[ItemCardapioResponse])
+def obter_produto(produto_id: int, db: Session = Depends(get_db)):
+    produto = db.query(Produto).filter(Produto.id == produto_id).first()
+    if not produto:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Produto nao encontrado")
+    return produto
+
 
 # ROTA 1: CRIAR PRODUTO (POST)
 @router.post("/", response_model=ItemCardapioResponse, status_code=status.HTTP_201_CREATED)
