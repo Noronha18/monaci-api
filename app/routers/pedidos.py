@@ -1,5 +1,6 @@
 from fastapi import Depends, HTTPException, APIRouter, status
 from sqlalchemy.orm import Session
+from typing import Optional, List
 from app.database import get_db
 from app.models import Pedido, ItemPedido, Produto
 from app.schemas import PedidoCreate, PedidoResponse, PedidoUpdate, StatusPedido
@@ -9,6 +10,20 @@ router = APIRouter(
     tags=["Pedidos"],
 )
 
+
+@router.get("/", response_model=List[PedidoResponse])
+
+def listar_pedidos(status: Optional[StatusPedido] = None,
+                   db: Session = Depends(get_db)
+):
+    """
+      Lista pedidos. Se o parâmetro 'status' for passado (ex: ?status=PAGO),
+      filtra os resultados. Caso contrário, retorna todos.
+      """
+    query = db.query(Pedido)
+    if status:
+        query = query.filter(Pedido.status == status)
+    return query.all()
 
 # Certifique-se de que PedidoResponse está importado do schemas
 # from app.schemas import ..., PedidoResponse
