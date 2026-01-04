@@ -81,10 +81,32 @@ def atualizar_status_pedido(pedido_id: int, atualizacao: PedidoUpdate, db: Sessi
     if not pedido:
         raise HTTPException(status_code=404, detail="Pedido nao encontrado")
 
-    if pedido.status == StatusPedido.ENTREGUE and atualizacao.status == StatusPedido.CANCELADO:
-        raise HTTPException(status_code=400, detail="Não é possível cancelar pedido já entregue")
+    status_atual = pedido.status
+    if isinstance(status_atual, str):
+        status_atual = StatusPedido(status_atual)
 
-    pedido.status = atualizacao.status
+
+    transicoes_permitidas = {
+        StatusPedido.CRIADO: {StatusPedido.PAGO, StatusPedido.CANCELADO},
+        StatusPedido.PAGO: {StatusPedido.PREPARANDO, StatusPedido.CANCELADO},
+        StatusPedido.PREPARANDO: {StatusPedido.PRONTO},
+        StatusPedido.PRONTO: {StatusPedido.ENTREGUE},
+        StatusPedido.ENTREGUE: set(),
+        StatusPedido.CANCELADO: set(),
+    }
+
+    novo_status = atualizacao.status
+
+    destinos_possiveis = transicoes_permitidas.get(status_atual, set())
+
+    if novo_status not in destinos_possiveis:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Transicao invalida. O Status '{status_atual.value}' so pode ir para: {[s.value for s in destinos_possiveis]}"
+        )
+
+
+    pedido.status = novo_status
     db.commit()
     db.refresh(pedido)
 
