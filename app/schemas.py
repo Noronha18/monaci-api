@@ -59,3 +59,8 @@ class StatusPedido(str, Enum):
 
 class PedidoUpdate(BaseModel):
     status: StatusPedido
+
+class WebhookPagamentoMock(BaseModel):
+    pedido_id: int
+    status_transacao: str
+    id_transacao_gateway: str

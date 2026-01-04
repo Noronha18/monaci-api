@@ -9,6 +9,20 @@ router = APIRouter(
     tags=["Pedidos"],
 )
 
+
+# Certifique-se de que PedidoResponse está importado do schemas
+# from app.schemas import ..., PedidoResponse
+
+@router.get("/{pedido_id}", response_model=PedidoResponse)
+def consultar_pedido(pedido_id: int, db: Session = Depends(get_db)):
+    pedido = db.query(Pedido).filter(Pedido.id == pedido_id).first()
+
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+
+    return pedido
+
+
 @router.post("/", response_model=PedidoResponse, status_code=status.HTTP_201_CREATED)
 def criar_pedido(pedido_in: PedidoCreate, db: Session = Depends(get_db)):
     """
