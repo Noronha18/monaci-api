@@ -9,7 +9,7 @@ router = APIRouter(
     tags=["Webhooks (Integracao)"],
 )
 
-@router.post ("pagamento-simulado", status_code=status.HTTP_200_OK)
+@router.post ("/pagamento-simulado", status_code=status.HTTP_200_OK)
 def receber_webhook_pagamento(
         webhook_data: WebhookPagamentoMock,
         db: Session = Depends(get_db)
