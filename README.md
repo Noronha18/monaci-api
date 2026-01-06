@@ -1,9 +1,3 @@
-Aqui está a documentação técnica para o seu projeto Monaci1.0 (API de Restaurante).
-
-Como este projeto é focado em Backend Engineering (FastAPI, Arquitetura, Docker), a descrição deve ser mais técnica para impressionar recrutadores ou outros desenvolvedores, destacando decisões de arquitetura como a Máquina de Estados (FSM) e a Idempotência.
-
-Copie e cole no README.md do repositório monaci-api.
-
 🍔 Monaci Delivery API
 API REST de Alta Performance para Gestão de Restaurantes e Delivery
 Desenvolvido com FastAPI, PostgreSQL e Docker.
